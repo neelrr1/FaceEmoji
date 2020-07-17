@@ -6,7 +6,7 @@ const port = 3000
 const vision = require('@google-cloud/vision');
 
 const fs = require('fs');
-const imgBase64 = fs.readFileSync('./base64test.txt').toString()
+const img = fs.readFileSync('./face.jpg')
 // console.log(imgBase64)
     
 // Creates a client
@@ -15,15 +15,9 @@ client.auth._getApplicationCredentialsFromFilePath("./auth.json")
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
-app.post('/faceDetect/:image', async (req, res) => {
+app.post('/faceDetect', async (req, res) => {
     
-    const request = {
-        image: {
-            content: imgBase64
-        }
-    }
-    const [result] = await client.faceDetection(request);
-    // console.log(result)
+    const [result] = await client.faceDetection(img);
     const faces = result.faceAnnotations;
     
     const out = []
