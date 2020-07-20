@@ -7,5 +7,6 @@ app.get('/', function(req, res) {
 })
 
 app.use(express.static(__dirname + '/static'))
+app.use('/face.jpg', express.static(__dirname + '/face.jpg'))
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
