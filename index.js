@@ -19,6 +19,11 @@ client.auth._getApplicationCredentialsFromFilePath("./auth.json")
 
 app.use('/form', express.static(__dirname + '/index.html'));
 
+app.use('/utils.js', express.static(__dirname + '/utils.js'))
+app.use('/opencv.js', express.static(__dirname + '/opencv.js'))
+app.use('/', express.static(__dirname + '/opencv.html'))
+app.use('/haarcascade_frontalface_default.xml', express.static(__dirname + '/haarcascade_frontalface_default.xml'))
+app.use('/haarcascade_eye.xml', express.static(__dirname + '/haarcascade_eye.xml'))
 app.post('/faceDetect', upload.single('image'), async (req, res) => {
 
     // TODO: File size limits and file validation?

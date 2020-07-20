@@ -4,7 +4,8 @@
 			id='uploadForm' 
 			action='/faceDetect' 
 			method='post' 
-            encType="multipart/form-data">
+			encType="multipart/form-data"
+			onsubmit="document.getElementById('uploadForm').submit(); return false">
                 <input type="text" name="name" />
 				<input type="file" name="image" />
 				<input type='submit' value='Upload!' />
