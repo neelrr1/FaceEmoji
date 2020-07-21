@@ -30,6 +30,17 @@
                 <label class="custom-file-label" for="fileInput">Choose image</label>
             </div>
         </div>
+        <br />
+        <h4>Choose your Emoji!</h4>
+        <table>
+            <tr>
+                <td>
+                    <img src="laughing_crying.png" width="50" height="50" />
+                </td>
+            </tr>
+        </table>
+        <br />
+        <!-- Try It! Button -->
         <button class="btn btn-primary" id="tryIt" disabled>
             <span id="button-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Loading...
@@ -57,6 +68,7 @@
     </div>
 <script src="utils.js" type="text/javascript"></script>
 <script type="text/javascript">
+var emojiPath = 'laughing_crying.png'
 // Custom file input handler
 $(document).ready(function () {
   bsCustomFileInput.init()
@@ -140,7 +152,7 @@ tryIt.addEventListener('click', () => {
         // cv.rectangle(src, point1, point2, [255, 0, 0, 255]);
         // roiSrc.copyTo(src.roi(new cv.Rect(0,0,roiSrc.cols,roiSrc.rows)))
         roiSrc.delete();
-        drawImageToCanvas('emoji.png', faces.get(i).width, faces.get(i).height, point1.x, point1.y, 'canvasOutput');
+        drawImageToCanvas(emojiPath, faces.get(i).width, faces.get(i).height, point1.x, point1.y, 'canvasOutput');
         console.log(point1.x, point1.y)
     }
     cv.imshow('canvasOutput', src);
