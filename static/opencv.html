@@ -73,14 +73,42 @@ function detectFaces(src) {
     let msize = new cv.Size(0, 0);
     faceCascade.detectMultiScale(gray, faces, 1.1, 3, 0, msize, msize);
     // Delete used resources
+    console.log(faces.get(0))
     gray.delete();
     faceCascade.delete();
     return faces;
 }
 
+function drawImageToCanvas(imgPath, x, y, canvasId, scaleFactor) {
+    //Get the canvas element by using the getElementById method.
+    var canvas = document.getElementById(canvasId); 
+    var context = canvas.getContext('2d');
+    
+    //Create a new Image object.
+    var img = new Image();    
+    img.src = imgPath;
+    
+    //When our image has loaded.
+    img.onload = function(){
+        //Draw the image onto the canvas.
+        var centerX = x + img.width / 2;
+        var centerY = y + img.height / 2;
+
+        var widthDiff = img.width * scaleFactor - img.width;
+        var heightDiff = img.height * scaleFactor - img.height;
+
+        x -= widthDiff /2;
+        y -= heightDiff / 2;
+
+        // console.log(x, y, centerX, centerY, img.width, img.height, width, height)
+
+        context.drawImage(img, x, y, img.width * scaleFactor, img.height * scaleFactor);
+    }
+}
+
 let utils = new Utils('errorMessage');
 
-// utils.loadImageToCanvas('face.jpg', 'canvasInput');
+utils.loadImageToCanvas('face.jpg', 'canvasInput');
 utils.addFileInputHandler('fileInput', 'canvasInput');
 
 let tryIt = document.getElementById('tryIt');
@@ -95,6 +123,10 @@ tryIt.addEventListener('click', () => {
         let point2 = new cv.Point(faces.get(i).x + faces.get(i).width,
                                 faces.get(i).y + faces.get(i).height);
         cv.rectangle(src, point1, point2, [255, 0, 0, 255]);
+        // roiSrc.copyTo(src.roi(new cv.Rect(0,0,roiSrc.cols,roiSrc.rows)))
+        roiSrc.delete();
+        // drawImageToCanvas('emoji.png', point1.x, point1.y, 'canvasOutput', 1.25);
+        console.log(point1.x, point1.y)
     }
     cv.imshow('canvasOutput', src);
     src.delete();

@@ -9,8 +9,6 @@
   "author": "Neel Raja & Jay Kudva",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/vision": "^2.1.1",
-    "express": "^4.17.1",
-    "multer": "^1.4.2"
+    "express": "^4.17.1"
   }
 }
