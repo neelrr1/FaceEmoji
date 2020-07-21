@@ -79,7 +79,7 @@ function detectFaces(src) {
     return faces;
 }
 
-function drawImageToCanvas(imgPath, x, y, canvasId, scaleFactor) {
+function drawImageToCanvas(imgPath, rectWidth, rectHeight, x, y, canvasId) {
     //Get the canvas element by using the getElementById method.
     var canvas = document.getElementById(canvasId); 
     var context = canvas.getContext('2d');
@@ -91,18 +91,23 @@ function drawImageToCanvas(imgPath, x, y, canvasId, scaleFactor) {
     //When our image has loaded.
     img.onload = function(){
         //Draw the image onto the canvas.
-        var centerX = x + img.width / 2;
-        var centerY = y + img.height / 2;
+        var scaleFactor = (rectWidth / img.width) * 1.25 ;
+        
+        var centerX = x + rectWidth / 2;
+        var centerY = y + rectHeight / 2;
+        console.log("centerx ", centerX, "centery ", centerY)
+
+        var emojiX = centerX - img.width / 2;
+        var emojiY = centerY - img.height / 2;
+        console.log("emojiX ", emojiX, "emojiY ", emojiY)
 
         var widthDiff = img.width * scaleFactor - img.width;
         var heightDiff = img.height * scaleFactor - img.height;
 
-        x -= widthDiff /2;
-        y -= heightDiff / 2;
+        emojiX -= widthDiff /2;
+        emojiY -= heightDiff / 2;
 
-        // console.log(x, y, centerX, centerY, img.width, img.height, width, height)
-
-        context.drawImage(img, x, y, img.width * scaleFactor, img.height * scaleFactor);
+        context.drawImage(img, emojiX, emojiY, img.width * scaleFactor, img.height * scaleFactor);
     }
 }
 
@@ -113,7 +118,17 @@ utils.addFileInputHandler('fileInput', 'canvasInput');
 
 let tryIt = document.getElementById('tryIt');
 tryIt.addEventListener('click', () => {
-    let src = cv.imread('canvasInput');
+    let srcInitial = cv.imread('canvasInput');
+    var src = new cv.Mat();
+
+    if (srcInitial.cols > 720) {
+        cv.resize(srcInitial, src, new cv.Size(720, (720/srcInitial.cols) * srcInitial.rows))
+    } else if (srcInitial.rows > 720) {
+        cv.resize(srcInitial, src, new cv.Size((720/srcInitial.rows) * srcInitial.cols, 720))
+    } else {
+        src = srcInitial;
+    }
+
     let faces = detectFaces(src);
 
     // Do something with each face
@@ -122,10 +137,10 @@ tryIt.addEventListener('click', () => {
         let point1 = new cv.Point(faces.get(i).x, faces.get(i).y);
         let point2 = new cv.Point(faces.get(i).x + faces.get(i).width,
                                 faces.get(i).y + faces.get(i).height);
-        cv.rectangle(src, point1, point2, [255, 0, 0, 255]);
+        // cv.rectangle(src, point1, point2, [255, 0, 0, 255]);
         // roiSrc.copyTo(src.roi(new cv.Rect(0,0,roiSrc.cols,roiSrc.rows)))
         roiSrc.delete();
-        // drawImageToCanvas('emoji.png', point1.x, point1.y, 'canvasOutput', 1.25);
+        drawImageToCanvas('emoji.png', faces.get(i).width, faces.get(i).height, point1.x, point1.y, 'canvasOutput');
         console.log(point1.x, point1.y)
     }
     cv.imshow('canvasOutput', src);

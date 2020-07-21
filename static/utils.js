@@ -52,11 +52,29 @@ function Utils(errorOutputId) { // eslint-disable-line no-unused-vars
         let canvas = document.getElementById(canvasId);
         let ctx = canvas.getContext('2d');
         let img = new Image();
+        var mWidth = 0;
+        var scaler = 0;
+        var mHeight = 0;
         img.crossOrigin = 'anonymous';
         img.onload = function() {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0, img.width, img.height);
+            if (img.width > 720 && img.width > img.height) {
+                mWidth = 720;
+                scaler = img.width / 720;
+                mHeight = img.height / scaler;
+            } else if (img.height > 720 && img.height > img.width) {
+                mHeight = 720;
+                scaler = img.height / 720;
+                mWidth = img.width / scaler;
+            } else {
+                mWidth = img.width;
+                mHeight = img.height;
+            }
+            canvas.width = mWidth;
+            canvas.height = mHeight;
+
+            console.log("mheight is ", mHeight);
+            console.log("mwidth is ", mWidth);
+            ctx.drawImage(img, 0, 0, mWidth, mHeight);
         };
         img.src = url;
     };
