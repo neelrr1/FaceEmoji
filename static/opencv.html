@@ -201,14 +201,11 @@ tryIt.addEventListener('click', () => {
 });
 
 utils.loadOpenCv(() => {
-    let eyeCascadeFile = 'haarcascade_eye.xml';
-    utils.createFileFromUrl(eyeCascadeFile, eyeCascadeFile, () => {
-        let faceCascadeFile = 'haarcascade_frontalface_default.xml';
-        utils.createFileFromUrl(faceCascadeFile, faceCascadeFile, () => {
-            tryIt.removeAttribute('disabled');
-            tryIt.innerText = 'Try it!'
-            $("#button-spinner").hide()
-        });
+    let faceCascadeFile = 'haarcascade_frontalface_default.xml';
+    utils.createFileFromUrl(faceCascadeFile, faceCascadeFile, () => {
+        tryIt.removeAttribute('disabled');
+        tryIt.innerText = 'Try it!'
+        $("#button-spinner").hide()
     });
 });
 </script>
