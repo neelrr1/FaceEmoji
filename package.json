@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "A wrapper API for the Google Cloud Vision platform",
   "main": "index.js",
+  "homepage": "http://neelrr1.github.io/FaceEmoji",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "gh-pages -d static"
   },
   "author": "Neel Raja & Jay Kudva",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "gh-pages": "^3.1.0"
   }
 }
