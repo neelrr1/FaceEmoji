@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <title>FaceEmoji</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+    <!-- <link href="js_example_style.css" rel="stylesheet" type="text/css" /> -->
+</head>
+<body>
+    <div class="entire">
+        <div class="p-2">
+            <h2>FaceEmoji</h2>
+            <h6>Automatically cover your face with emoji!</h6>
+            <p>
+                <!-- Upload your own image and press <b>Try it</b>!<br> -->
+            </p>
+            <div class="inputBox">
+                <div class="input-group mb-3 w-25 left">
+                    <div class="custom-file">
+                        <input class="custom-file-input" type="file" id="fileInput" name="file" accept="image/*" />
+                        <label class="custom-file-label" for="fileInput">select</label>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <h4>Choose your Emoji!</h4>
+            <table align="center">
+                <tr>
+                    <td>
+                        <img src="laughing_crying.png" width="50" onclick="emojiPicker('laugh')"/>
+                    </td>
+                    <td>
+                        <img src="heart.png" width="50" height="50" onclick="emojiPicker('heart')"/>
+                    </td>
+                    <td>
+                        <img src="clown.png" width="50" onclick="emojiPicker('clown')"/>
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <!-- Try It! Button -->
+            <button class="btn btn-primary" id="tryIt" disabled>
+                <span id="button-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+            <p class="err" id="errorMessage"></p>
+            <table cellpadding="0" cellspacing="0" width="0" border="0" align="center">
+                <tr>
+                    <td>
+                        <canvas id="canvasInput"></canvas>
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <td>
+                        <canvas id="canvasOutput"></canvas>
+                    </td>
+                    <!-- <td>
+                        <div class="caption">canvasInput</div>
+                    </td>
+                    <td>
+                        <div class="caption">canvasOutput</div>
+                    </td> -->
+                </tr>
+            </table>
+            <!-- <br /> -->
+        </div>
+<script src="utils.js" type="text/javascript"></script>
+<script type="text/javascript">
+var emojiPath = 'laughing_crying.png';
+
+function emojiPicker(emoji) {
+    if (emoji == 'laugh') {
+        emojiPath = 'laughing_crying.png';
+    } else if (emoji == 'heart') {
+        emojiPath = 'heart.png';
+    } else if (emoji == 'clown') {
+        emojiPath = 'clown.png';        
+    }
+}
+
+function showOutput() {
+    $('#canvasInput').hide()
+    $('#canvasOutput').show()
+}
+
+function hideOutput() {
+    $('#canvasInput').show()
+    $('#canvasOutput').hide()
+}
+
+$('#fileInput').change(function () {
+    hideOutput()
+})
+
+// Custom file input handler
+$(document).ready(function () {
+  bsCustomFileInput.init()
+  hideOutput()
+})
+
+function detectFaces(src) {
+    let gray = new cv.Mat();
+    cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+    let faces = new cv.RectVector();
+    let faceCascade = new cv.CascadeClassifier();
+    // load pre-trained classifier
+    faceCascade.load('haarcascade_frontalface_default.xml');
+    // detect faces
+    let msize = new cv.Size(0, 0);
+
+    faceCascade.detectMultiScale(gray, faces, 1.1, 5, 0, msize, msize);
+    // Delete used resources
+    gray.delete();
+    faceCascade.delete();
+    return faces;
+}
+
+function drawImageToCanvas(imgPath, rectWidth, rectHeight, x, y, canvasId) {
+    //Get the canvas element by using the getElementById method.
+    var canvas = document.getElementById(canvasId); 
+    var context = canvas.getContext('2d');
+    
+    //Create a new Image object.
+    var img = new Image();    
+    img.src = imgPath;
+    
+    //When our image has loaded.
+    img.onload = function(){
+        //Draw the image onto the canvas.
+        var scaleFactor = (rectWidth / img.width) * 1.25 ;
+        
+        var centerX = x + rectWidth / 2;
+        var centerY = y + rectHeight / 2;
+
+        var emojiX = centerX - img.width / 2;
+        var emojiY = centerY - img.height / 2;
+
+        var widthDiff = img.width * scaleFactor - img.width;
+        var heightDiff = img.height * scaleFactor - img.height;
+
+        emojiX -= widthDiff /2;
+        emojiY -= heightDiff / 2;
+
+        context.drawImage(img, emojiX, emojiY, img.width * scaleFactor, img.height * scaleFactor);
+    }
+}
+
+let utils = new Utils('errorMessage');
+
+// utils.loadImageToCanvas('face.jpg', 'canvasInput');
+utils.addFileInputHandler('fileInput', 'canvasInput');
+
+let tryIt = document.getElementById('tryIt');
+tryIt.addEventListener('click', () => {
+    let srcInitial = cv.imread('canvasInput');
+    var src = new cv.Mat();
+
+    if (srcInitial.cols > 720) {
+        cv.resize(srcInitial, src, new cv.Size(720, (720/srcInitial.cols) * srcInitial.rows))
+    } else if (srcInitial.rows > 720) {
+        cv.resize(srcInitial, src, new cv.Size((720/srcInitial.rows) * srcInitial.cols, 720))
+    } else {
+        src = srcInitial;
+    }
+
+    let faces = detectFaces(src);
+
+    // Do something with each face
+    for (let i = 0; i < faces.size(); ++i) {
+        let roiSrc = src.roi(faces.get(i));
+        let point1 = new cv.Point(faces.get(i).x, faces.get(i).y);
+        let point2 = new cv.Point(faces.get(i).x + faces.get(i).width,
+                                faces.get(i).y + faces.get(i).height);
+        // cv.rectangle(src, point1, point2, [255, 0, 0, 255]);
+        // roiSrc.copyTo(src.roi(new cv.Rect(0,0,roiSrc.cols,roiSrc.rows)))
+        roiSrc.delete();
+        drawImageToCanvas(emojiPath, faces.get(i).width, faces.get(i).height, point1.x, point1.y, 'canvasOutput');
+    }
+    showOutput();
+    cv.imshow('canvasOutput', src);
+    src.delete();
+    faces.delete();
+});
+
+utils.loadOpenCv(() => {
+    let faceCascadeFile = 'haarcascade_frontalface_default.xml';
+    utils.createFileFromUrl(faceCascadeFile, faceCascadeFile, () => {
+        tryIt.removeAttribute('disabled');
+        tryIt.innerText = 'Try it!'
+        $("#button-spinner").hide()
+    });
+});
+</script>
+</div>
+</body>
+</html>
