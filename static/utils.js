@@ -10,14 +10,14 @@ function Utils(errorOutputId) { // eslint-disable-line no-unused-vars
         script.addEventListener('load', () => {
             if (cv.getBuildInformation)
             {
-                console.log(cv.getBuildInformation());
+                // console.log(cv.getBuildInformation());
                 onloadCallback();
             }
             else
             {
                 // WASM
                 cv['onRuntimeInitialized']=()=>{
-                    console.log(cv.getBuildInformation());
+                    // console.log(cv.getBuildInformation());
                     onloadCallback();
                 }
             }
@@ -72,8 +72,6 @@ function Utils(errorOutputId) { // eslint-disable-line no-unused-vars
             canvas.width = mWidth;
             canvas.height = mHeight;
 
-            console.log("mheight is ", mHeight);
-            console.log("mwidth is ", mWidth);
             ctx.drawImage(img, 0, 0, mWidth, mHeight);
         };
         img.src = url;
